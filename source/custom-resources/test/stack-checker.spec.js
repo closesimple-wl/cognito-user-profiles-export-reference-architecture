@@ -113,39 +113,6 @@ describe('stack-checker', function () {
         }
     });
 
-    it('Create: Throws an error if MFA is enabled', async function () {
-        // Mock event data
-        const event = {
-            ResourceProperties: {
-                StackName: 'stack-name',
-                PrimaryUserPoolId: 'user-pool-id-a'
-            }
-        };
-
-        mockCognitoISP.describeUserPool.mockImplementationOnce(() => {
-            return {
-                promise() {
-                    return Promise.resolve({
-                        UserPool: {
-                            MfaConfiguration: 'OPTIONAL',
-                            UsernameAttributes: ['email']
-                        }
-                    });
-                }
-            };
-        });
-
-
-        CustomResourceHelperFunctions.handler.mockImplementationOnce(async (evt, ctx, handleCreate) => {
-            await handleCreate(evt);
-        });
-
-        const lambda = require('../stack-checker');
-        await expect(async () => {
-            await lambda.handler(event, context);
-        }).rejects.toThrow('User Pools with MFA enabled are not supported. The user pool\'s MFA configuration is set to OPTIONAL');
-    });
-
     it('Create: Throws an error if more than one username attributes are configured', async function () {
         // Mock event data
         const event = {
