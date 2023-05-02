@@ -99,20 +99,30 @@ const importUsers = async (context, newUserPoolId) => {
             for (let i = 0; i < receiveMessageResult.Messages.length; i++) {
                 const message = receiveMessageResult.Messages[i];
                 const userData = JSON.parse(message.Body);
-                const userCSVLine = formatUserToCsvLine(userImportCSVHeaders, userData);
-                const lineSize = Buffer.byteLength(userCSVLine);
+                const emailVerified = normalizeEmailVerified(userData)
 
-                //Check if adding the next line will put the upload over the limit
-                if (!maxUploadByteSizeReached) {
-                    maxUploadByteSizeReached = (lineSize + userImportCSVByteSize) >= maxUploadByteSize;
+                if(emailVerified === "true"){
+                    const userCSVLine = formatUserToCsvLine(userImportCSVHeaders, userData);
+                    const lineSize = Buffer.byteLength(userCSVLine);
+
+                    //Check if adding the next line will put the upload over the limit
+                    if (!maxUploadByteSizeReached) {
+                        maxUploadByteSizeReached = (lineSize + userImportCSVByteSize) >= maxUploadByteSize;
+                    }
+
+                    if ((numNewUsersToImport < maxUserImportCSV) && !maxUploadByteSizeReached) {
+                        userImportCSV += userCSVLine;
+                        userImportCSVByteSize += lineSize;
+                        userImportMappingFile += `${numNewUsersToImport + 1},${getUserSub(userData)}\n`;
+                        numNewUsersToImport++;
+                        deleteMessageBatchParams.Entries.push({
+                            Id: message.MessageId,
+                            ReceiptHandle: message.ReceiptHandle
+                        });
+                    }
                 }
-
-                if ((numNewUsersToImport < maxUserImportCSV) && !maxUploadByteSizeReached) {
-                    userImportCSV += userCSVLine;
-                    userImportCSVByteSize += lineSize;
-                    userImportMappingFile += `${numNewUsersToImport + 1},${getUserSub(userData)}\n`;
-                    numNewUsersToImport++;
-                    deleteMessageBatchParams.Entries.push({ Id: message.MessageId, ReceiptHandle: message.ReceiptHandle });
+                else{
+                    console.log(`emailVerified was not "true": ${emailVerified}`);
                 }
             }
 
@@ -179,8 +189,7 @@ const formatUserToCsvLine = (csvHeaderArray, userData) => {
                 headerValue = `false`;
                 break;
             case 'email_verified':
-                const emailVerified = userData.userAttributes.find(attr => attr.Name === header);
-                headerValue = `${emailVerified ? emailVerified.Value : 'false'}`;
+                headerValue = normalizeEmailVerified(userData);
                 break;
             case 'phone_number_verified':
                 const phoneVerified = userData.userAttributes.find(attr => attr.Name === header);
@@ -331,4 +340,9 @@ const checkUserImportJob = async (jobId, newUserPoolId) => {
     output.ImportJobStatus = response.UserImportJob.Status;
     return output;
 };
+
+function normalizeEmailVerified(userData) {
+    const emailVerified = userData.userAttributes.find(attr => attr.Name === "email_verified");
+    return `${emailVerified ? emailVerified.Value : 'false'}`;
+}
 

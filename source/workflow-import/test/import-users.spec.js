@@ -164,10 +164,16 @@ describe('import-new-users: ImportNewUsers', function () {
                                     id: 'row-id',
                                     type: 'user : uuid',
                                     username: 'test-user',
-                                    userAttributes: [{
-                                        Name: 'sub',
-                                        Value: 'uuid'
-                                    }],
+                                    userAttributes: [
+                                        {
+                                            Name: 'sub',
+                                            Value: 'uuid'
+                                        },
+                                        {
+                                            Name: "email_verified",
+                                            Value: "true"
+                                        }
+                                    ],
                                     userEnabled: true
                                 })
                             }
@@ -262,10 +268,16 @@ describe('import-new-users: ImportNewUsers', function () {
                                     id: 'row-id',
                                     type: 'user : uuid',
                                     username: 'test-user',
-                                    userAttributes: [{
-                                        Name: 'not-the-sub',
-                                        Value: 'uuid'
-                                    }],
+                                    userAttributes: [
+                                        {
+                                            Name: 'not-the-sub',
+                                            Value: 'uuid'
+                                        },
+                                        {
+                                            Name: 'email_verified',
+                                            Value: 'true'
+                                        }
+                                    ],
                                     userEnabled: true
                                 })
                             }
