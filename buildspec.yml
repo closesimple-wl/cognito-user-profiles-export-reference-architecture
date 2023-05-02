@@ -25,4 +25,5 @@ phases:
         --s3-bucket $S3Repo --output-template-file codepipeline.template
 artifacts:
   files:
-    - codepipeline.template
+    - deployment/codepipeline.template
+  discard-paths: yes
