@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+  pre_build:
+    commands:
+      - export REGION=us-east-1
+      - export SECONDARY_REGION=us-west-2
+      - export DIST_OUTPUT_BUCKET=aws-reference-user-export
+      - export SOLUTION_NAME=cognito-backup-build
+      - export VERSION=1
+  build:
+    commands:
+      - cd ./deployment
+      - chmod +x ./run-unit-tests.sh
+      - ./run-unit-tests.sh
+      - chmod +x ./build-s3-dist.sh
+      - ./build-s3-dist.sh $DIST_OUTPUT_BUCKET $SOLUTION_NAME $VERSION
+  post_build:
+    commands:
+      - aws cloudformation package
+        --template-file regional-s3-assets/cognito-user-profiles-export-reference-architecture.template
+        --s3-bucket $S3Repo --output-template-file codepipeline.template
+  artifacts:
+    files:
+      - codepipeline.template
