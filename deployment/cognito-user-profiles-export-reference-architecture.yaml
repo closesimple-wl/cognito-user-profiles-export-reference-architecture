@@ -15,7 +15,7 @@ Parameters:
   PrimaryUserPoolId:
     Type: String
     AllowedPattern: ^[\w-]+_[0-9a-zA-Z]+$
-    Default: "{{resolve:ssm:/dev/admin/CognitoUserPoolArn}}"
+    Default: '{{resolve:ssm:/dev/admin/CognitoUserPoolArn}}'
   SecondaryRegion:
     Type: String
     AllowedPattern: ^[a-z]{2}-[a-z]+-\d{1}$
