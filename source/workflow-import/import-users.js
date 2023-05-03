@@ -186,7 +186,7 @@ const formatUserToCsvLine = (csvHeaderArray, userData) => {
                 headerValue = `${userData.pseudoUsername}`;
                 break;
             case 'cognito:mfa_enabled':
-                headerValue = `false`;
+                headerValue = `true`;
                 break;
             case 'email_verified':
                 headerValue = normalizeEmailVerified(userData);
