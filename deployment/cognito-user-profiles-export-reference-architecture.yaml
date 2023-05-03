@@ -14,8 +14,7 @@ Description: (SO0126) - Cognito User Profiles Export Reference Architecture. Ver
 Parameters:
   PrimaryUserPoolId:
     Type: String
-    AllowedPattern: ^[\w-]+_[0-9a-zA-Z]+$
-    Default: "{{resolve:ssm:/dev/admin/CognitoUserPoolArn:1}}"
+    Default: '{{resolve:ssm:/dev/admin/CognitoUserPoolArn:1}}'
   SecondaryRegion:
     Type: String
     AllowedPattern: ^[a-z]{2}-[a-z]+-\d{1}$
