@@ -18,6 +18,7 @@ Parameters:
   SecondaryRegion:
     Type: String
     AllowedPattern: ^[a-z]{2}-[a-z]+-\d{1}$
+    Default: "us-west-2"
   ExportFrequency:
     Type: String
     Default: "EVERY_DAY"
@@ -28,7 +29,7 @@ Parameters:
     AllowedValues: ["1", "5", "10"]
   NotificationEmail:
     Type: String
-    AllowedPattern: "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"
+    Default: '{{resolve:ssm:/dev/cognitoExport/email:1}}'
   SnsPreference:
     Type: String
     Default: "INFO_AND_ERRORS"
